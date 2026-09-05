@@ -1,6 +1,6 @@
 # Cálculos de justificación — Reglas de negocio (dataset Olist)
 
-Actualización: 3 de septiembre, 2026
+Actualización: 4 de septiembre, 2026
 
 > Ver reglas descritas en [`docs/decisiones.md`](../docs/decisiones.md#4-reglas-de-negocio-priorizadas-para-bpmn--dmn).
 
@@ -58,8 +58,47 @@ Tabla dinámica: `payment_installments` en Filas, Cuenta de `order_id` en Valore
 
 **Conclusión:** el 11.76% de los pedidos supera las 6 cuotas — segmento no trivial que justifica una regla DMN de revisión de riesgo cuando `payment_installments` > 6.
 
+## Resultado — Regla 3: Cumplimiento de SLA de entrega
+
+Actualización: 4 de septiembre, 2026
+
+### Metodología
+
+- Columna agregada `dias_diferencia_entrega` en `olist_orders_dataset`:
+
+```
+=SI(G2="","",(G2-H2))
+```
+
+  (G = `order_delivered_customer_date`, H = `order_estimated_delivery_date`)
+
+> Nota técnica: al restar fechas, Excel hereda formato de fecha en el resultado en vez de mostrar el número de días — hubo que cambiar manualmente el formato de la columna a "Número" para poder leer el resultado correctamente.
+
+- Columna `cumple_sla`:
+
+```
+=SI(K2="","sin dato",SI(K2<=0,"cumple","no cumple"))
+```
+
+  (negativo o cero = entregado a tiempo o antes; positivo = entregado tarde)
+
+### Resultado
+
+| cumple_sla | % de pedidos |
+|---|---|
+| cumple | 89.15% |
+| no cumple | 7.87% |
+| sin dato | 2.98% |
+
+### Conclusión
+
+7.87% de los pedidos incumple el SLA de entrega estimado. Sobre una base de ~99,000 pedidos históricos, equivale a más de 7,700 casos — volumen suficiente para justificar un mecanismo de monitoreo/alerta automática dentro del proceso (ej. vía Operate) y, opcionalmente, una tarea de notificación proactiva al cliente cuando se detecte riesgo de atraso.
+
+## Estado
+
+Las 3 reglas de negocio quedan justificadas con datos reales. Listo para iniciar el modelado BPMN.
+
 ## Pendiente para la próxima sesión
 
-- [ ] Cálculo de Regla 3 (SLA de entrega: `order_delivered_customer_date` vs. `order_estimated_delivery_date`)
 - [ ] Modelado BPMN real del proceso "Pedido a Entrega" de MaxiMundo usando estas reglas
-- [ ] Construcción de tablas DMN en Camunda con estos umbrales (boleto vs. credit_card; >6 cuotas)
+- [ ] Construcción de tablas DMN en Camunda con estos umbrales (boleto vs. credit_card; >6 cuotas; SLA de entrega)

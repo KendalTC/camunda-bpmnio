@@ -1,6 +1,6 @@
 # Decisiones del proyecto — MaxiMundo (Camunda 8 + bpmn.io)
 
-Última actualización: 3 de septiembre, 2026
+Última actualización: 4 de septiembre, 2026
 
 ## 1. Stack técnico
 
@@ -41,6 +41,7 @@
 
 - **Columnas:** `order_delivered_customer_date` vs. `order_estimated_delivery_date`
 - **Uso:** no se modela como gateway del proceso principal, sino como métrica de monitoreo mostrada en Operate/dashboard (% de pedidos que incumplen el SLA). Opcional: disparar tarea de "notificar al cliente" si se detecta riesgo de atraso.
+- **Justificación con datos:** ✅ calculada — 7.87% de los pedidos incumple el SLA (~7,700 de ~99,000 pedidos históricos), volumen suficiente para justificar monitoreo/alerta automática. Ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md#resultado--regla-3-cumplimiento-de-sla-de-entrega).
 
 ### Regla 4 (proceso secundario): Escalamiento por satisfacción
 
@@ -64,8 +65,7 @@ Enfoque híbrido, basado en los requisitos del enunciado ("se ejecuta paso a pas
 
 - [ ] Guion + grabación del video de instalación (debe enviarse 3 días antes de la exposición: 25 de septiembre)
 - [ ] Diccionario de datos traducido (dataset en portugués)
-- [x] Cálculos reales de las métricas que justifican las Reglas 1 y 2 (ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md))
-- [ ] Cálculo de la métrica de la Regla 3 (SLA de entrega)
+- [x] Cálculos reales de las métricas que justifican las Reglas 1, 2 y 3 (ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md))
 - [ ] Modelado BPMN real del proceso "Pedido a Entrega" de MaxiMundo
 - [ ] Construcción de las tablas DMN
 - [ ] Guion cronometrado del workshop (80 min)

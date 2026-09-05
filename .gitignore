@@ -1,0 +1,5 @@
+# Archivos temporales de bloqueo de Office (se crean mientras el archivo está abierto)
+~$*.xlsx
+~$*.xls
+~$*.docx
+~$*.pptx
