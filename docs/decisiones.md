@@ -29,13 +29,14 @@
 - **Columnas:** `payment_type`, `order_purchase_timestamp`, `order_approved_at`
 - **Lógica:** `boleto` → esperar confirmación antes de continuar (proceso más lento, depende del banco); `credit_card` → avanzar automáticamente.
 - **Justificación con datos:** ✅ calculada — boleto tarda ~33.12 h en promedio vs. ~4.56 h de credit_card (~7.3x más lento). Ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md#resultado--regla-1-tiempo-de-aprobación-por-método-de-pago).
-- **Implementación BPMN:** compuerta exclusiva (XOR gateway) como punto central del proceso.
+- **Implementación BPMN:** compuerta exclusiva (XOR gateway) como punto central del proceso. ✅ conectada a la tabla DMN [`determinarConfirmacionPago.dmn`](../03-modelado/determinarConfirmacionPago.dmn) — ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md).
 
 ### Regla 2 (anidada dentro de la Regla 1): Riesgo por número de cuotas
 
 - **Columna:** `payment_installments`
 - **Lógica:** más de 6 cuotas → marcar para revisión de riesgo; 6 o menos → aprobación automática.
 - **Justificación con datos:** ✅ calculada — 11.76% de los pedidos supera las 6 cuotas (segmento no trivial), con un pico inusual en 10 cuotas. Ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md#resultado--regla-2-distribución-de-cuotas-payment_installments).
+- **Implementación BPMN:** ✅ conectada a la tabla DMN [`determinarRiesgoCuotas.dmn`](../03-modelado/determinarRiesgoCuotas.dmn) — ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md).
 
 ### Regla 3 (métrica, no bifurcación): SLA de entrega
 
@@ -66,8 +67,9 @@ Enfoque híbrido, basado en los requisitos del enunciado ("se ejecuta paso a pas
 - [ ] Guion + grabación del video de instalación (debe enviarse 3 días antes de la exposición: 25 de septiembre)
 - [ ] Diccionario de datos traducido (dataset en portugués)
 - [x] Cálculos reales de las métricas que justifican las Reglas 1, 2 y 3 (ver [`02-dataset/calculos-justificacion-reglas.md`](../02-dataset/calculos-justificacion-reglas.md))
-- [ ] Modelado BPMN real del proceso "Pedido a Entrega" de MaxiMundo
-- [ ] Construcción de las tablas DMN
+- [x] Modelado BPMN inicial del proceso "Pedido a Entrega" de MaxiMundo (`Prueba1.bpmn`, con pool secundario de Atención al Cliente)
+- [x] Construcción y conexión de las tablas DMN de las Reglas 1 y 2 (ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md))
+- [ ] Correr instancias con datos reales del dataset de Olist (no solo pruebas técnicas) para responder las preguntas de negocio
 - [ ] Guion cronometrado del workshop (80 min)
 - [ ] Documento gerencial completo
 - [ ] Documento técnico, guía del taller, tarea corta para compañeros, presentación final
