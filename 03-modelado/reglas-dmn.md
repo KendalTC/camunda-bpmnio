@@ -44,3 +44,34 @@ Actualización: 4 de septiembre, 2026
 ### Próximo paso
 
 Preparar una muestra de datos reales del dataset de Olist para usarla como variables de instancias representativas del negocio (no solo pruebas técnicas), y correr esas instancias para responder las preguntas de negocio planteadas.
+
+## Fase 4 — Compuerta paralela (AND) + corrección de deadlock
+
+Actualización: 13 de septiembre, 2026
+
+### Cambio de diseño
+
+Se agregó una bifurcación paralela (Parallel Gateway / AND) para que "Preparar pedido" y "Generar factura" se ejecuten simultáneamente, convergiendo antes de "Despachar pedido" — patrón: AND-split → [Preparar pedido | Generar factura] → AND-join → Despachar pedido.
+
+### Error encontrado y resuelto: deadlock por confundir merge (XOR) con split (AND)
+
+**Síntoma:** la instancia quedaba "viva" indefinidamente en el gateway AND, sin marcar ningún incidente ni error visible en Operate — el Instance History simplemente no avanzaba más allá de ese punto, y el diagrama mostraba el camino recorrido en azul deteniéndose justo al llegar al símbolo "+".
+
+**Causa:** el mismo Parallel Gateway estaba siendo usado a la vez como punto de convergencia de dos caminos *mutuamente excluyentes* provenientes de un XOR anterior (los caminos "sí"/"no" de "¿cuotas mayores a 6?") y como punto de bifurcación hacia las dos tareas paralelas. Un AND-join espera recibir un token por *cada* entrada antes de continuar; como los dos caminos de entrada eran alternativos (nunca llegan ambos en la misma instancia), el segundo token nunca llegaba, causando un bloqueo permanente sin generar ningún error explícito.
+
+**Solución:** se insertó un Exclusive Gateway (XOR) adicional para converger primero los caminos alternativos ("no" y "Revisar riesgo de cuotas"), y desde ese XOR una única flecha alimenta el Parallel Gateway (AND), que ahora actúa exclusivamente como punto de bifurcación (una entrada, dos salidas), sin mezclar semánticas de convergencia y paralelismo en el mismo elemento.
+
+> **Nota pedagógica:** este es un error de diseño BPMN documentado en la literatura (mezclar semántica de gateways de distinto tipo en un mismo nodo) — vale la pena incluirlo explícitamente en el documento técnico como ejemplo de decisión técnica corregida durante la construcción, tal como pide el rubro de "Demostración técnica".
+
+### Prueba de validación
+
+Instancia ejecutada con camino "no" (`requiereRevision = false`) tras la corrección: el proceso avanzó correctamente a través del nuevo XOR de convergencia, el AND split, ambas tareas paralelas, el AND join, y llegó a "Pedido despachado" sin incidentes.
+
+### Próximo pendiente (opcional, según tiempo disponible)
+
+- [ ] Agregar objetos de datos (Pedido, Factura) y almacén de datos (Base de datos de pedidos) como notación visual — sin funcionalidad de ejecución real en Camunda 8, sirve para completitud de la notación BPMN según el estándar visto en el curso (Tema 2.3)
+- [ ] Evaluar subproceso colapsado y evento de timer si sobra tiempo antes del 28 de septiembre
+
+### Formulario de la tarea de revisión manual
+
+[`revisarRiesgoCuotas.form`](revisarRiesgoCuotas.form): formulario de la User Task que recibe los pedidos marcados con `requiereRevision = true` (más de 6 cuotas). Muestra el número de cuotas solicitadas y ofrece al revisor tres opciones (`aprobar`, `rechazar`, `mas_info`) más un campo de comentario libre.
