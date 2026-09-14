@@ -1,6 +1,6 @@
 # Decisiones del proyecto — MaxiMundo (Camunda 8 + bpmn.io)
 
-Última actualización: 4 de septiembre, 2026
+Última actualización: 13 de septiembre, 2026
 
 ## 1. Stack técnico
 
@@ -71,5 +71,5 @@ Enfoque híbrido, basado en los requisitos del enunciado ("se ejecuta paso a pas
 - [x] Construcción y conexión de las tablas DMN de las Reglas 1 y 2 (ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md))
 - [ ] Correr instancias con datos reales del dataset de Olist (no solo pruebas técnicas) para responder las preguntas de negocio
 - [ ] Guion cronometrado del workshop (80 min)
-- [ ] Documento gerencial completo
+- [ ] Documento gerencial: redactado hasta "Justificación" (4 de 10 secciones), faltan Ventajas y desventajas, Planes y costos, Casos de éxito, Descripción del proceso, Conclusiones y Referencias — ver [`04-documento-gerencial/avance-redaccion.md`](../04-documento-gerencial/avance-redaccion.md)
 - [ ] Documento técnico, guía del taller, tarea corta para compañeros, presentación final
