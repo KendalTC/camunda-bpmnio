@@ -70,8 +70,40 @@ Instancia ejecutada con camino "no" (`requiereRevision = false`) tras la correcc
 ### Próximo pendiente (opcional, según tiempo disponible)
 
 - [ ] Agregar objetos de datos (Pedido, Factura) y almacén de datos (Base de datos de pedidos) como notación visual — sin funcionalidad de ejecución real en Camunda 8, sirve para completitud de la notación BPMN según el estándar visto en el curso (Tema 2.3)
-- [ ] Evaluar subproceso colapsado y evento de timer si sobra tiempo antes del 28 de septiembre
+- [x] Evaluar subproceso colapsado y evento de timer si sobra tiempo antes del 28 de septiembre — ver Fase 5
 
 ### Formulario de la tarea de revisión manual
 
 [`revisarRiesgoCuotas.form`](revisarRiesgoCuotas.form): formulario de la User Task que recibe los pedidos marcados con `requiereRevision = true` (más de 6 cuotas). Muestra el número de cuotas solicitadas y ofrece al revisor tres opciones (`aprobar`, `rechazar`, `mas_info`) más un campo de comentario libre.
+
+## Fase 5 — Subproceso colapsado + Boundary Timer
+
+Actualización: 13 de septiembre, 2026
+
+### Subproceso colapsado "Validar pago"
+
+Se agrupó todo el tramo de validación de pago (Validar método pago, ambas tablas DMN, evento de confirmación bancaria, gateway de cuotas, revisión manual, XOR de convergencia) dentro de un Sub-process (collapsed) llamado "Validar pago". El diagrama principal queda simplificado a:
+
+```
+Pedido recibido → [Validar pago] → AND split → (Preparar pedido | Generar factura) → AND join → Despachar pedido → Pedido despachado
+```
+
+> **Nota técnica:** en esta versión del Modeler no se encontró una función de "agrupar selección existente en subproceso" vía clic derecho; se realizó creando primero la caja de "Sub-process (collapsed)" vacía y reconstruyendo los elementos en su interior.
+
+### Boundary Timer sobre el subproceso "Validar pago"
+
+Se agregó un evento de límite (boundary event) de tipo Timer, adjunto al borde del subproceso "Validar pago", con duración de prueba de `PT30S` (30 segundos — en un escenario de negocio real este valor sería considerablemente mayor, ej. `PT24H`).
+
+**Comportamiento:** si el subproceso "Validar pago" no se completa dentro del tiempo definido, se interrumpe automáticamente y el flujo salta a una nueva actividad "Escalar seguimiento de pago pendiente", terminando en un End Event alternativo "Pago sin confirmar" — distinto del camino normal hacia "Pedido despachado".
+
+**Justificación de negocio:** modela el caso real de que un pago vía boleto nunca llegue a confirmarse por parte del banco, evitando que el proceso quede esperando indefinidamente sin ninguna acción de seguimiento.
+
+**Prueba de validación:** instancia iniciada con `metodoPago = "boleto"` sin completar la confirmación bancaria manualmente; tras superar el tiempo del timer, la instancia tomó correctamente la ruta de escalamiento hacia "Pago sin confirmar".
+
+### Pendiente descartado por esta sesión: patrón multi-instancia
+
+Se intentó configurar la tarea "Preparar pedido" como actividad multi-instancia (para repetirse una vez por cada vendedor del pedido, aprovechando que un mismo `order_id` de Olist puede involucrar múltiples sellers). No se logró ubicar la opción en la interfaz gráfica de esta versión del Modeler. Se descarta por restricción de tiempo, documentado como mejora identificada pero no implementada. Alternativa no explorada: edición directa del XML del diagrama (bloque `<bpmn:multiInstanceLoopCharacteristics>`).
+
+### Estado general del modelo
+
+Complejidad técnica ampliada y validada: subproceso colapsado, boundary timer con ruta de escalamiento alternativa, gateways XOR/AND correctamente diferenciados, dos tablas DMN conectadas y una tarea de revisión manual con formulario propio.

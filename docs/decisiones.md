@@ -70,8 +70,9 @@ Enfoque híbrido, basado en los requisitos del enunciado ("se ejecuta paso a pas
 - [x] Modelado BPMN inicial del proceso "Pedido a Entrega" de MaxiMundo (`Prueba1.bpmn`, con pool secundario de Atención al Cliente)
 - [x] Construcción y conexión de las tablas DMN de las Reglas 1 y 2 (ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md))
 - [x] Bifurcación paralela (AND) para "Preparar pedido" + "Generar factura", con corrección de un deadlock por mezclar semántica de gateway XOR/AND (ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md#fase-4--compuerta-paralela-and--corrección-de-deadlock))
+- [x] Subproceso colapsado "Validar pago" + Boundary Timer con ruta de escalamiento ("Pago sin confirmar") para pedidos boleto que nunca confirman el pago (ver [`03-modelado/reglas-dmn.md`](../03-modelado/reglas-dmn.md#fase-5--subproceso-colapsado--boundary-timer))
 - [ ] Correr instancias con datos reales del dataset de Olist (no solo pruebas técnicas) para responder las preguntas de negocio
-- [ ] (Opcional) Objetos de datos/almacén de datos, subproceso colapsado y evento de timer, si sobra tiempo
+- [ ] (Opcional, descartado por tiempo) Objetos de datos/almacén de datos visuales; patrón multi-instancia en "Preparar pedido" (no se encontró la opción en el Modeler; alternativa no explorada: editar el XML directamente)
 - [ ] Guion cronometrado del workshop (80 min)
 - [ ] Documento gerencial: redactado hasta "Justificación" (4 de 10 secciones), faltan Ventajas y desventajas, Planes y costos, Casos de éxito, Descripción del proceso, Conclusiones y Referencias — ver [`04-documento-gerencial/avance-redaccion.md`](../04-documento-gerencial/avance-redaccion.md)
 - [ ] Documento técnico, guía del taller, tarea corta para compañeros, presentación final
