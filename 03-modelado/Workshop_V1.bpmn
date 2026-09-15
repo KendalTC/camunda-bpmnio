@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_18cfq28" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.50.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
   <bpmn:collaboration id="Collaboration_1bxyucg">
+    <bpmn:extensionElements />
     <bpmn:participant id="Participant_1ch1cpu" name="MaxiMundo" processRef="Process_1lwe2il" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1lwe2il" isExecutable="true">
@@ -179,12 +180,12 @@
         <dc:Bounds x="152" y="80" width="1598" height="860" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1pn341e_di" bpmnElement="Lane_1pn341e" isHorizontal="true">
-        <dc:Bounds x="182" y="80" width="1568" height="425" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1pj9ofn_di" bpmnElement="Lane_1pj9ofn" isHorizontal="true">
         <dc:Bounds x="182" y="505" width="1568" height="435" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1pn341e_di" bpmnElement="Lane_1pn341e" isHorizontal="true">
+        <dc:Bounds x="182" y="80" width="1568" height="425" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0uffce6_di" bpmnElement="Activity_0uffce6">
