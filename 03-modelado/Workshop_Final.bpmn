@@ -6,10 +6,8 @@
   <bpmn:process id="Process_1lwe2il" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0k807a9">
       <bpmn:lane id="Lane_1pj9ofn" name="Log[istica">
-        <bpmn:flowNodeRef>Activity_0uffce6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1q1yg0q</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_184lh0r</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1moc0qd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1mp5h1a</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_12bqrdg</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0vvy6co</bpmn:flowNodeRef>
@@ -19,6 +17,8 @@
         <bpmn:flowNodeRef>Event_0r46tzw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_00a8sob</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0h6k555</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1moc0qd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0uffce6</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1pn341e" name="Sistema de pagos">
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
@@ -37,10 +37,6 @@
         <bpmn:flowNodeRef>Event_1blhrni</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:task id="Activity_0uffce6" name="Generar Factura">
-      <bpmn:incoming>Flow_0is1tmf</bpmn:incoming>
-      <bpmn:outgoing>Flow_13qqhns</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:task id="Activity_1q1yg0q" name="Despachar pedido">
       <bpmn:incoming>Flow_1v1vwrb</bpmn:incoming>
       <bpmn:outgoing>Flow_0r28db4</bpmn:outgoing>
@@ -50,10 +46,6 @@
       <bpmn:incoming>Flow_1rbduxb</bpmn:incoming>
       <bpmn:outgoing>Flow_1v1vwrb</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:task id="Activity_1moc0qd" name="Preparar pedido">
-      <bpmn:incoming>Flow_0hcoku1</bpmn:incoming>
-      <bpmn:outgoing>Flow_1rbduxb</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:parallelGateway id="Gateway_1mp5h1a">
       <bpmn:incoming>Flow_0s3bukw</bpmn:incoming>
       <bpmn:outgoing>Flow_0hcoku1</bpmn:outgoing>
@@ -204,6 +196,14 @@
       <bpmn:incoming>Flow_1kyb3jz</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1qc9oxu" sourceRef="Activity_0qv6v5a" targetRef="Activity_08dxhau" />
+    <bpmn:task id="Activity_1moc0qd" name="Preparar pedido">
+      <bpmn:incoming>Flow_0hcoku1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rbduxb</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0uffce6" name="Generar Factura">
+      <bpmn:incoming>Flow_0is1tmf</bpmn:incoming>
+      <bpmn:outgoing>Flow_13qqhns</bpmn:outgoing>
+    </bpmn:task>
   </bpmn:process>
   <bpmn:escalation id="Escalation_2pl4aer" name="Escalation_2pl4aer" escalationCode="5" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -220,19 +220,12 @@
         <dc:Bounds x="182" y="80" width="1688" height="805" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0uffce6_di" bpmnElement="Activity_0uffce6">
-        <dc:Bounds x="1060" y="945" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1q1yg0q_di" bpmnElement="Activity_1q1yg0q">
         <dc:Bounds x="1280" y="995" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_184lh0r_di" bpmnElement="Gateway_184lh0r">
         <dc:Bounds x="1195" y="1010" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_117ax2s_di" bpmnElement="Activity_1moc0qd">
-        <dc:Bounds x="1060" y="1065" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1mp5h1a_di" bpmnElement="Gateway_1mp5h1a">
         <dc:Bounds x="975" y="995" width="50" height="50" />
@@ -334,6 +327,13 @@
           <dc:Bounds x="1606" y="585" width="89" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_117ax2s_di" bpmnElement="Activity_1moc0qd">
+        <dc:Bounds x="1040" y="1150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uffce6_di" bpmnElement="Activity_0uffce6">
+        <dc:Bounds x="1070" y="900" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0zi84md_di" bpmnElement="Event_00a8sob">
         <dc:Bounds x="1462" y="1057" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -342,13 +342,13 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0is1tmf_di" bpmnElement="Flow_0is1tmf">
         <di:waypoint x="1025" y="1020" />
-        <di:waypoint x="1043" y="1020" />
-        <di:waypoint x="1043" y="985" />
-        <di:waypoint x="1060" y="985" />
+        <di:waypoint x="1050" y="1020" />
+        <di:waypoint x="1050" y="940" />
+        <di:waypoint x="1070" y="940" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13qqhns_di" bpmnElement="Flow_13qqhns">
-        <di:waypoint x="1160" y="985" />
-        <di:waypoint x="1220" y="985" />
+        <di:waypoint x="1170" y="940" />
+        <di:waypoint x="1220" y="940" />
         <di:waypoint x="1220" y="1010" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v1vwrb_di" bpmnElement="Flow_1v1vwrb">
@@ -360,14 +360,14 @@
         <di:waypoint x="1430" y="1035" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1rbduxb_di" bpmnElement="Flow_1rbduxb">
-        <di:waypoint x="1160" y="1105" />
-        <di:waypoint x="1220" y="1105" />
+        <di:waypoint x="1140" y="1190" />
+        <di:waypoint x="1220" y="1190" />
         <di:waypoint x="1220" y="1060" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hcoku1_di" bpmnElement="Flow_0hcoku1">
         <di:waypoint x="1000" y="1045" />
-        <di:waypoint x="1000" y="1075" />
-        <di:waypoint x="1060" y="1075" />
+        <di:waypoint x="1000" y="1190" />
+        <di:waypoint x="1040" y="1190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0s3bukw_di" bpmnElement="Flow_0s3bukw">
         <di:waypoint x="1010" y="760" />

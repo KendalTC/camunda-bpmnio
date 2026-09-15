@@ -107,3 +107,68 @@ Se intentó configurar la tarea "Preparar pedido" como actividad multi-instancia
 ### Estado general del modelo
 
 Complejidad técnica ampliada y validada: subproceso colapsado, boundary timer con ruta de escalamiento alternativa, gateways XOR/AND correctamente diferenciados, dos tablas DMN conectadas y una tarea de revisión manual con formulario propio.
+
+> ⚠️ **Actualización (Fase 6):** el subproceso colapsado descrito arriba se descartó por preferencia de legibilidad del equipo — ver Fase 6. El boundary timer se conserva, pero ahora cuelga directamente del tramo plano de validación de pago en vez de una caja colapsada.
+
+## Fase 6 — Versión final: gateway del revisor + Consigna 2 (SLA de entrega)
+
+Actualización: 14 de septiembre, 2026
+
+### Decisión de diseño: se descartó el subproceso colapsado
+
+Tras evaluarlo, el equipo decidió eliminar el subproceso colapsado "Validar pago" implementado en la Fase 5 y volver a mostrar todo el flujo de validación de pago de forma plana (sin colapsar), por preferencia de legibilidad del equipo. El resto de la lógica (2 tablas DMN, evento de confirmación bancaria, Boundary Timer sobre validación) se mantiene igual, solo que visible directamente en el diagrama principal en vez de dentro de una caja colapsada.
+
+### Corrección del bug original: la decisión del revisor ahora sí afecta el proceso
+
+Se agregó el gateway **"¿Pedido aprobado?"** inmediatamente después de la convergencia del flujo de validación de pago, con tres salidas:
+
+- **"rechazar"** (`=decisionRevision = "rechazar"`) → tarea **"Notificar rechazo"** → End Event **"Pedido rechazado por riesgo"**
+- **"mas_info"** (`=decisionRevision = "mas_info"`) → tarea **"Solicitar información adicional al cliente"** → regresa (bucle) a **"Revisar riesgo de cuotas"**, permitiendo una nueva ronda de revisión
+- **"aprobar"** (aprobado explícitamente, o pedidos que nunca requirieron revisión por tener ≤6 cuotas) → tarea **"Aprobar pedido"** → continúa hacia el AND split (Generar Factura / Preparar pedido)
+
+> **Nota importante (bug de despliegue):** el camino "aprobar" originalmente se dejó como flujo por defecto sin condición explícita; en el proceso de ajuste se le agregó por error una condición explícita `=decisionRevision = "aprobar"` con espacios extra al inicio del string, causando un error de despliegue (`failed to parse expression`, FEEL es estricto con que "=" sea el primer carácter sin espacios). Se corrigió reescribiendo la expresión manualmente sin espacios.
+
+### Verificación técnica de los pendientes de la sesión anterior
+
+Revisando el XML de [`Workshop_Final.bpmn`](Workshop_Final.bpmn) (idéntico en contenido a `Prueba1.bpmn`):
+
+1. **Condición de "aprobar":** quedó como **condición explícita** `=decisionRevision = "aprobar"` (`Flow_17sucfb`), **no** como flujo por defecto — el gateway `Gateway_0c46t8c` no tiene ningún flujo marcado `default`. Esto significa que un pedido que **nunca pasó por revisión manual** (≤6 cuotas, `decisionRevision` sin definir) no cumple ninguna de las tres condiciones (`rechazar` / `mas_info` / `aprobar`) al llegar a este gateway, lo que provocaría un error de ejecución ("no matching sequence flow") en vez de avanzar. **Pendiente real de corregir:** o bien marcar el flujo "aprobar" como flujo por defecto, o bien inicializar `decisionRevision = "aprobar"` como valor por defecto para los pedidos que no requieren revisión.
+2. **Tipo de "Entrega escalada a logística":** el elemento (`Event_1r1qlc8`) es en realidad un **Intermediate Throw Event** con `escalationEventDefinition`, no un End Event, y **no tiene flujo saliente** — queda como un punto muerto al final de esa rama. Para que sea correcto según el estándar BPMN, debería convertirse en un **End Event de tipo Escalation** (o agregarle un flujo saliente hacia un End Event real).
+3. **Detalle menor:** la etiqueta del flujo hacia "Solicitar información adicional al cliente" tiene un typo: `"solitirar info"` (falta la "c").
+
+### Limitación conocida y documentada intencionalmente (Consigna 1 — versión completa del equipo)
+
+El camino "mas_info" hace un bucle real de vuelta a "Revisar riesgo de cuotas" **sin límite de intentos ni contador**. Fue una decisión explícita del equipo (se evaluó agregar un contador con Output Mapping en FEEL — `=intentosInformacion + 1` — pero se descartó por simplicidad). **Riesgo reconocido:** si un revisor selecciona "Solicitar más información" repetidamente, la instancia podría permanecer en bucle indefinido sin ningún mecanismo de corte. Se documenta como limitación conocida del prototipo, no como un error no identificado.
+
+### Consigna 2 (SLA de entrega) — implementada como parte del modelo final
+
+Se agregó una nueva etapa después de "Despachar pedido":
+
+```
+Despachar pedido → Esperar confirmación de entrega ──(a tiempo)──> Pedido despachado (fin)
+                          │
+                          ⏱️ Boundary Timer "Posible atraso en entrega"
+                          ▼
+                    Notificar posible atraso → End Event "Entrega con atraso reportado"
+                          │
+                          ⏱️ (segundo Boundary Timer, más corto)
+                          ▼
+                    Escalar el caso → "Entrega escalada a logística" (ver hallazgo #2 arriba)
+```
+
+**Decisión de diseño clave:** inicialmente se consideró poner el Boundary Timer directamente sobre "Despachar pedido", pero se identificó que esa tarea representa solo la acción interna de MaxiMundo (empacar/entregar al transportista), no el tiempo de tránsito real hasta el cliente — que es lo que mide el SLA real del dataset de Olist (`order_estimated_delivery_date` vs. `order_delivered_customer_date`). Por eso se agregó la tarea intermedia "Esperar confirmación de entrega" como representación del tiempo de tránsito, y el timer se colgó sobre esa tarea en su lugar. Esta es una buena decisión técnica a explicar en el documento técnico.
+
+### Archivos de esta fase
+
+- [`Workshop_Final.bpmn`](Workshop_Final.bpmn): versión completa/clave de respuesta (idéntica a `Prueba1.bpmn`), con las Consignas 1 y 2 ya resueltas por el equipo.
+- [`Workshop_V1.bpmn`](Workshop_V1.bpmn): versión anterior, sin "Solicitar información adicional al cliente" ni "Escalar el caso" — candidata a servir de plantilla **incompleta** para entregar a los compañeros (ver [`05-workshop/tarea-companeros.md`](../05-workshop/tarea-companeros.md)).
+
+### Pendiente para la próxima sesión
+
+- [ ] Corregir el gateway "¿Pedido aprobado?" para que cubra el caso de pedidos sin `decisionRevision` definido (flujo por defecto o valor inicial) — ver hallazgo #1 arriba
+- [ ] Convertir "Entrega escalada a logística" en un End Event de tipo Escalation real (o agregarle flujo saliente) — ver hallazgo #2 arriba
+- [ ] Corregir el typo "solitirar info" → "solicitar info"
+- [ ] Probar despliegue completo de punta a punta sin errores
+- [ ] Decidir qué tramos del modelo se reconstruyen EN VIVO durante el workshop (80 min) vs. cuáles se muestran ya construidos — el modelo actual es demasiado extenso para reconstruirlo completo en el tiempo disponible
+- [ ] Confirmar si `Workshop_V1.bpmn` es la base definitiva de la plantilla incompleta para compañeros, o si falta despojarla de más elementos
+- [ ] Redactar el texto formal de ambas consignas para el documento de "Tarea para la clase" (ver [`05-workshop/tarea-companeros.md`](../05-workshop/tarea-companeros.md))
