@@ -12,7 +12,6 @@
         <bpmn:flowNodeRef>Activity_08dxhau</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1psav50</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_16axu9l</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0imriww</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_11dqlaq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0obe1nf</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0zarboh</bpmn:flowNodeRef>
@@ -20,6 +19,7 @@
         <bpmn:flowNodeRef>Event_1blhrni</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_121b8hx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ea5m0q</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0imriww</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1pj9ofn" name="Log[istica">
         <bpmn:flowNodeRef>Activity_0uffce6</bpmn:flowNodeRef>
@@ -85,10 +85,6 @@
       <bpmn:outgoing>Flow_0uibljx</bpmn:outgoing>
       <bpmn:outgoing>Flow_0kminj7</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0imriww" name="Confirmacion  bancaria recibida">
-      <bpmn:incoming>Flow_1pjwmdt</bpmn:incoming>
-      <bpmn:outgoing>Flow_01rst2t</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:businessRuleTask id="Activity_11dqlaq" name="Consultar confirmacion de pago">
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="Decision_04dp310" resultVariable="requiereEspera" />
@@ -173,6 +169,13 @@
       <bpmn:incoming>Flow_0bgfk0o</bpmn:incoming>
       <bpmn:outgoing>Flow_1kji0ec</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:intermediateCatchEvent id="Event_0imriww" name="Confirmacion  bancaria recibida">
+      <bpmn:incoming>Flow_1pjwmdt</bpmn:incoming>
+      <bpmn:outgoing>Flow_01rst2t</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_093eia5">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1bxyucg">
@@ -231,12 +234,6 @@
           <dc:Bounds x="977" y="95" width="87" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1lctrtv" bpmnElement="Event_0imriww">
-        <dc:Bounds x="732" y="212" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="708" y="255" width="84" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0bez1na" bpmnElement="Activity_11dqlaq">
         <dc:Bounds x="480" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -288,6 +285,12 @@
       <bpmndi:BPMNShape id="Activity_0clj2vn_di" bpmnElement="Activity_0clj2vn">
         <dc:Bounds x="1430" y="750" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_166cqus_di" bpmnElement="Event_0imriww">
+        <dc:Bounds x="732" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="708" y="245" width="84" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0zi84md_di" bpmnElement="Event_00a8sob">
         <dc:Bounds x="1462" y="677" width="36" height="36" />
@@ -347,7 +350,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0v4fch8" bpmnElement="Flow_01rst2t">
-        <di:waypoint x="750" y="212" />
+        <di:waypoint x="750" y="202" />
         <di:waypoint x="750" y="150" />
         <di:waypoint x="800" y="150" />
       </bpmndi:BPMNEdge>
@@ -366,9 +369,11 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1m7q751" bpmnElement="Flow_1pjwmdt">
         <di:waypoint x="675" y="230" />
-        <di:waypoint x="732" y="230" />
+        <di:waypoint x="704" y="230" />
+        <di:waypoint x="704" y="220" />
+        <di:waypoint x="732" y="220" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="689" y="212" width="30" height="14" />
+          <dc:Bounds x="703" y="202" width="30" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0cyy2wt" bpmnElement="Flow_13otby9">

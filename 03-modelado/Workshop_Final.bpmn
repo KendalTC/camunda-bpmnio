@@ -25,7 +25,6 @@
         <bpmn:flowNodeRef>Activity_0zarboh</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_11dqlaq</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0obe1nf</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0imriww</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1psav50</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_08dxhau</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_16axu9l</bpmn:flowNodeRef>
@@ -35,6 +34,7 @@
         <bpmn:flowNodeRef>Activity_0qv6v5a</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1blhrni</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_121b8hx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0imriww</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:task id="Activity_1q1yg0q" name="Despachar pedido">
@@ -92,10 +92,6 @@
       <bpmn:outgoing>Flow_1khyxep</bpmn:outgoing>
       <bpmn:outgoing>Flow_1pjwmdt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0imriww" name="Confirmacion  bancaria recibida">
-      <bpmn:incoming>Flow_1pjwmdt</bpmn:incoming>
-      <bpmn:outgoing>Flow_01rst2t</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:businessRuleTask id="Activity_1psav50" name="Consultar riesgo de cuotas">
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="Decision_0jivutp" resultVariable="requiereRevision" />
@@ -204,6 +200,13 @@
       <bpmn:incoming>Flow_0id9ige</bpmn:incoming>
       <bpmn:outgoing>Flow_1kyb3jz</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:intermediateCatchEvent id="Event_0imriww" name="Confirmacion  bancaria recibida">
+      <bpmn:incoming>Flow_1pjwmdt</bpmn:incoming>
+      <bpmn:outgoing>Flow_01rst2t</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0kq5fuv">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmn:escalation id="Escalation_2pl4aer" name="Escalation_2pl4aer" escalationCode="5" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -283,12 +286,6 @@
           <dc:Bounds x="684.5" y="425" width="71" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1lctrtv" bpmnElement="Event_0imriww">
-        <dc:Bounds x="702" y="182" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="608" y="186.5" width="84" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_04ppxpk" bpmnElement="Activity_1psav50">
         <dc:Bounds x="790" y="100" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -333,6 +330,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_08yd0lf_di" bpmnElement="Activity_121b8hx">
         <dc:Bounds x="1410" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07x14fi_di" bpmnElement="Event_0imriww">
+        <dc:Bounds x="702" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="608" y="187" width="84" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0h6k555_di" bpmnElement="Event_0h6k555">
         <dc:Bounds x="1462" y="1192" width="36" height="36" />
