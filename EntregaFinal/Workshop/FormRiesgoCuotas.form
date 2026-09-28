@@ -1,0 +1,65 @@
+{
+  "components": [
+    {
+      "text": "   ## Revisión de riesgo por cuotas\n\n   Este pedido fue marcado para revisión manual por superar el umbral de 6 cuotas.",
+      "type": "text",
+      "layout": {
+        "row": "Row_16jcm9c",
+        "columns": null
+      },
+      "id": "Field_0mo2al5"
+    },
+    {
+      "text": "   **Número de cuotas solicitadas:** {{numeroCuotas}}",
+      "type": "text",
+      "layout": {
+        "row": "Row_1vlhgq7",
+        "columns": null
+      },
+      "id": "Field_0whax33"
+    },
+    {
+      "label": "Decision sobre el pedido",
+      "values": [
+        {
+          "label": "Aprobar",
+          "value": "aprobar"
+        },
+        {
+          "label": "Rechazar",
+          "value": "rechazar"
+        },
+        {
+          "label": "Solicitar mas info",
+          "value": "mas_info"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_08drdc9",
+        "columns": null
+      },
+      "id": "Field_0fth69n",
+      "key": "decisionRevision"
+    },
+    {
+      "label": "Comentario del revisor",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1ck0phn",
+        "columns": null
+      },
+      "id": "Field_03oeetg",
+      "key": "comentarioRevisor"
+    }
+  ],
+  "type": "default",
+  "id": "Form_096i2b5",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.50.1"
+  },
+  "schemaVersion": 19
+}
